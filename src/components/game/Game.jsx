@@ -2,8 +2,8 @@ import { useState, useEffect} from "react"
 
 import styles from "./Game.module.css"
 import GameOption from "../gameOption/GameOption"
-import Icon from "../icon/Icon"
 import GameInfo from "../gameinfo/GameInfo"
+import Score from "../score/Score"
 
 const winnerTable = [
     [0,1,2],
@@ -22,6 +22,8 @@ function Game(){
     const [winner, setWinner] = useState(0)
     const [winnerLine, setWinnerLine] = useState([])
     const [draw, setdraw] = useState(false)
+    const [playerO, setplayerO] = useState(0)
+    const [playerX, setplayerX] = useState(0)
     const handleClick = (position)=>{
         if(gameState[position] === 0 && winner === 0){
             let newgameState=[...gameState]
@@ -36,6 +38,8 @@ function Game(){
             if(sum === 3 || sum === -3){ 
                 setWinner(sum/3) 
                 setWinnerLine(line)
+                if (sum === 3) setplayerO(playerO+1)
+                if (sum === -3) setplayerX(playerX+1)
             }
         })
     }
@@ -69,27 +73,33 @@ function Game(){
     }, [winner])
 
     return(
-       <div className={styles.gameContent}>
-             <div className={styles.game}>
-            {
-                gameState.map((value, position)=>
-                    <GameOption
-                        key={`game-option-position-${position}`}
-                        status={value}
-                        click={()=> handleClick(position)}
-                        isWinner={verifyWinnerLine(position)}
-                        isDraw={draw}
-                    />
-                )
-            }
-        </div>
-            <GameInfo 
-                player={player}
-                winner={winner}
-                onReset={handleReset}
-                draw={draw}
-            />
-       </div>
+        <>
+            <div className={styles.gameContent}>
+                <div className={styles.game}>
+                {
+                    gameState.map((value, position)=>
+                        <GameOption
+                            key={`game-option-position-${position}`}
+                            status={value}
+                            click={()=> handleClick(position)}
+                            isWinner={verifyWinnerLine(position)}
+                            isDraw={draw}
+                        />
+                    )
+                }
+                </div>
+                <GameInfo 
+                    player={player}
+                    winner={winner}
+                    onReset={handleReset}
+                    draw={draw}
+                />
+            </div>
+                <Score
+                    playerO={playerO}
+                    playerX={playerX}
+                />
+        </>
     )
 }
 
